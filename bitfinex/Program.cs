@@ -1,21 +1,19 @@
 ﻿using Bitfinex.Net.Clients;
-using System.Net;;
 
-Console.Write("Введите валюту которую хотели бы проверить. Например (btcusd) => ");
+
+Console.Write("Enter a value you want to get trade hsitory. Instance (btcusd) => ");
 var valute = Console.ReadLine().ToUpper();
-Console.Write("Введите время за какой период хотели бы проверить. Например (1m) => ");
-var time = Console.ReadLine();
 
-//var url = $"https://api-pub.bitfinex.com/v2/candles/trade:1m:tBTCUSD/hist";
-var url = $"https://api-pub.bitfinex.com/v2/candles/trade:{time}:t{valute}/hist";
-var request = WebRequest.Create(url);
-request.Method = "GET";
-using var webResponse = request.GetResponse();
-using var webStream = webResponse.GetResponseStream();
-using var reader = new StreamReader(webStream);
-var data = reader.ReadToEnd();
+var bitfinexClient = new BitfinexClient();
 
-Console.WriteLine(data + "\n\n" + "Нажмите ENTER что бы посмотреть Тиккеры");
+var symbolData = await bitfinexClient.SpotApi.ExchangeData.GetTradeHistoryAsync($"t{valute}");
+foreach (var symbol in symbolData.Data)
+    Console.WriteLine("ID = " + symbol.Id + 
+        "\nTimestamp = " + symbol.Quantity + 
+        "\nTimestamp = " + symbol.Price + 
+        "\nTimestamp = " + symbol.Timestamp +
+        "\n----------------------------------------");
+Console.WriteLine("Press enter to  get tickers ...");
 Console.ReadLine();
 
 var clients = new BitfinexSocketClient();
